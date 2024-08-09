@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hi!</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #000;
+            color: #fff;
+            overflow-x: hidden;
+            overflow-y: scroll;
+        }
+
+        .container {
+            text-align: center;
+            padding: 100px 20px;
+            position: relative;
+        }
+
+        .header {
+            position: relative;
+            opacity: 0;
+            animation: fadeIn 3s forwards;
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #fff;
+            text-shadow: 2px 2px 4px rgba(255, 255, 255, 0.7);
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        .scroll-content {
+            padding: 20px;
+            margin-top: 100px;
+        }
+
+        .text-section {
+            opacity: 0;
+            transition: opacity 1s ease-in-out;
+            padding: 100px;
+            margin: 20px auto;
+            max-width: 800px;
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            position: relative;
+            z-index: 1;
+            font-size: 4em;
+            font-weight: bold;
+            color: #fff;
+            background: #000;
+            background: linear-gradient(135deg, #333, #000);
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+            visibility: hidden;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            line-height: 1.2em;
+            overflow: hidden;
+        }
+
+        .text-section.active {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        .text-section p {
+            margin: 0;
+        }
+
+        .text-section span {
+            display: inline-block;
+            opacity: 0;
+            transition: opacity 0.7s ease;
+        }
+
+        .text-section span.appear {
+            animation: fadeInWords 1s forwards;
+        }
+
+        @keyframes fadeInWords {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .text-section .highlight {
+            color: #ff6f61;
+            font-size: 2.5em;
+            display: inline-block;
+            margin-top: 20px;
+        }
+
+        .text-section:nth-child(1) .highlight {
+            color: #ff6f61;
+        }
+
+        .text-section:nth-child(2) .highlight {
+            color: #6a1b9a;
+        }
+
+        .text-section:nth-child(3) .highlight {
+            color: #43a047;
+        }
+
+        .footer {
+            margin-top: 50px;
+            position: relative;
+        }
+
+        .footer button {
+            background: #ff69b4;
+            border: none;
+            color: white;
+            padding: 15px 25px;
+            font-size: 1.2em;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .footer button:hover {
+            background: #ff1493;
+        }
+
+        .popup {
+            display: none;
+            position: fixed;
+            z-index: 2;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.6);
+            padding-top: 60px;
+        }
+
+        .popup-content {
+            background-color: #fff;
+            margin: 5% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            text-align: center;
+            border-radius: 15px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .popup-content img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 15px;
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+        }
+
+        /* New feature styles */
+        .flirty-message {
+            padding: 20px;
+            margin: 50px auto;
+            max-width: 800px;
+            font-size: 2em;
+            color: #fff;
+            background: #222;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+        }
+
+        .flirty-buttons {
+            margin-top: 20px;
+        }
+
+        .flirty-buttons button {
+            background: #ff69b4;
+            border: none;
+            color: white;
+            padding: 15px 30px;
+            font-size: 1.5em;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.5s ease;
+            margin: 10px;
+        }
+
+        .flirty-buttons button.yes {
+            background: #4caf50;
+        }
+
+        .flirty-buttons button.no {
+            background: #f44336;
+        }
+
+        .flirty-buttons button.no.decreasing {
+            font-size: 1em;
+            padding: 10px 20px;
+        }
+
+        .flirty-buttons button.yes.increasing {
+            font-size: 2em;
+            padding: 20px 40px;
+        }
+
+        .result-message {
+            display: none;
+            font-size: 1.5em;
+            margin-top: 20px;
+        }
+
+        .result-message.show {
+            display: block;
+        }
+
+    /* Modal Styles */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+.modal-content {
+    background-color: #fff;
+    color: #000;
+    padding: 40px;
+    border-radius: 10px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+    max-width: 5000px;
+    margin: auto;
+    position: relative;
+}
+
+.close-button {
+    position: absolute;
+    top: 10px;
+    right: 20px;
+    font-size: 40px;
+    cursor: pointer;
+    color: #000;
+}
+
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <header class="header">
+            <h1>"Happy Birthday to the one who makes my heart race! 🎉 Your smile is magnetic and your presence unforgettable. Hope your day is as amazing as you are. Let’s celebrate together soon? 😉"</h1>
+        </header>
+        <section class="scroll-content">
+            <!-- Add your scroll-based text sections here -->
+            <div class="text-section" id="section1">
+                <p><span>I</span> <span>wanna</span> <span>be</span> <span>your</span> <span>vacuum</span>
+                    <span>cleaner</span><br><span>Breathing</span> <span>in</span> <span>your</span> <span
+                        class="highlight">dust</span>
+                </p>
+            </div>
+            <div class="text-section" id="section2">
+                <p><span>I</span> <span>wanna</span> <span>be</span> <span>your</span> <span>Ford</span>
+                    <span>Cortina</span><br><span>I</span> <span>will</span> <span>never</span> <span
+                        class="highlight">rust</span>
+                </p>
+            </div>
+            <div class="text-section" id="section3">
+                <p><span>If</span> <span>you</span> <span>like</span> <span>your</span> <span>coffee</span>
+                    <span>hot</span><br><span>Let</span> <span>me</span> <span>be</span> <span>your</span> <span
+                        class="highlight">coffee pot</span>
+                </p>
+            </div>
+            <!-- New Feature Section -->
+            <div class="flirty-message">
+                <p id="flirtyText">You’re just my cup of tea… So how about we spill some secrets over a coffee date?” ☕😉</p>
+                <div class="flirty-buttons">
+                    <button class="yes">Yes</button>
+                    <button class="no">No</button>
+                </div>
+                <p class="result-message" id="yesMessage">Waiting to see you! 😊</p>
+            </div>
+        </section>
+        
+    </div>
+
+   
+
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <span class="close-button" id="close-modal">&times;</span>
+            <p>Waiting to see you soon! 😊</p>
+        </div>
+    </div>
+
+    <!-- Audio element to play the MP3 -->
+    <audio id="audio" src="./audio1.mp3"></audio>
+    <div id="target-section">Play Btn</div>
+    
+
+    <script>
+
+
+        const audio = document.getElementById('audio');
+        const targetSection = document.getElementById('section1');
+        let hasPlayed = false; // To ensure audio plays only once
+
+
+        window.addEventListener('scroll', function () {
+            const rect = targetSection.getBoundingClientRect();
+            const windowHeight = window.innerHeight || document.documentElement.clientHeight;          
+              
+            // Check if the target section is in view
+            if (rect.top >= 0 && rect.bottom >= windowHeight) {
+                audio.play().then(() => {
+                    hasPlayed = true; // Set flag to true to prevent replay
+                }).catch(function(error) {
+                    console.log('Audio playback prevented:', error);
+                });
+                             
+            }else{
+                console.log("Not enter");
+                
+            }
+        });
+
+
+        const yesButton = document.querySelector('.flirty-buttons .yes');
+const noButton = document.querySelector('.flirty-buttons .no');
+const resultMessage = document.getElementById('yesMessage');
+const flirtyText = document.getElementById('flirtyText'); // Get the element for the flirty text
+let noButtonClicked = false;
+let intervalId;
+
+const modal = document.getElementById('modal');
+const closeModalButton = document.getElementById('close-modal');
+
+yesButton.addEventListener('click', function () {
+    modal.style.display = 'flex';  // Show the modal
+    noButton.classList.remove('decreasing');
+    yesButton.classList.remove('increasing');
+    noButtonClicked = false;  // Reset noButtonClicked state
+    clearInterval(intervalId);  // Stop the interval when Yes is clicked
+});
+
+// Function to close the modal
+closeModalButton.addEventListener('click', function () {
+    modal.style.display = 'none';  // Hide the modal
+});
+
+// Optionally, close the modal if the user clicks outside of the modal content
+window.addEventListener('click', function (event) {
+    if (event.target === modal) {
+        modal.style.display = 'none';  // Hide the modal
+    }
+});
+
+noButton.addEventListener('click', function () {
+    noButtonClicked = true;  // Set state indicating no button was clicked
+    clearInterval(intervalId);  // Clear any previous intervals to avoid multiple intervals running simultaneously
+    intervalId = setInterval(() => {
+        let yesFontSize = parseFloat(window.getComputedStyle(yesButton).fontSize);
+        let noFontSize = parseFloat(window.getComputedStyle(noButton).fontSize);
+
+        // Increase Yes button size by 2px
+        yesButton.style.fontSize = (yesFontSize + 4) + 'px';
+        yesButton.style.padding = (yesFontSize + 10) + 'px ' + (yesFontSize + 20) + 'px';
+
+        // Decrease No button size by 2px
+        noButton.style.fontSize = (noFontSize - 4) + 'px';
+        noButton.style.padding = (noFontSize + 10) + 'px ' + (noFontSize + 20) + 'px';
+
+        // Stop decreasing if No button font size gets too small
+        if (noFontSize <= 10) {
+            clearInterval(intervalId);
+        }
+    }, 500);
+
+    // Change the text when No is clicked
+    flirtyText.textContent = "Then how about going to Kovil ?";
+});
+
+document.addEventListener('scroll', function () {
+    const sections = document.querySelectorAll('.text-section');
+    const triggerHeight = window.innerHeight / 1.5; // Adjust this value if needed
+
+    sections.forEach(section => {
+        const rect = section.getBoundingClientRect();
+        if (rect.top < triggerHeight) {
+            section.classList.add('active');
+            // Add animation for each span inside the section
+            const spans = section.querySelectorAll('span');
+            spans.forEach((span, index) => {
+                setTimeout(() => {
+                    span.classList.add('appear');
+                }, index * 100); // Stagger the appearance of each word
+            });
+        }
+    });
+});
+        
+    </script>
+</body>
+
+</html>
