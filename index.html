@@ -140,7 +140,7 @@
         }
 
         .footer button:hover {
-            background: #ff1493;
+            background: #ff2414;
         }
 
         .popup {
@@ -243,41 +243,79 @@
             display: block;
         }
 
-    /* Modal Styles */
-.modal {
-    display: none;
-    position: fixed;
-    z-index: 1000;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-    justify-content: center;
-    align-items: center;
-    text-align: center;
-}
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
 
-.modal-content {
-    background-color: #fff;
-    color: #000;
-    padding: 40px;
-    border-radius: 10px;
-    box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
-    max-width: 5000px;
-    margin: auto;
-    position: relative;
-}
+        .modal-content {
+            background-color: #fff;
+            color: #000;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+            max-width: 500px;
+            margin: auto;
+            position: relative;
+        }
 
-.close-button {
-    position: absolute;
-    top: 10px;
-    right: 20px;
-    font-size: 40px;
-    cursor: pointer;
-    color: #000;
-}
+        .close-button {
+            position: absolute;
+            top: 10px;
+            right: 20px;
+            font-size: 40px;
+            cursor: pointer;
+            color: #000;
+        }
 
+        /* Down button styles */
+        .down-button {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #ff69b4;
+            border: none;
+            color: white;
+            padding: 15px;
+            font-size: 1.2em;
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            z-index: 1000;
+            transition: opacity 0.5s ease;
+        }
+
+        .down-button.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        @media (max-width: 600px) {
+            .text-section {
+                font-size: 2em;
+                padding: 50px;
+            }
+
+            .flirty-message {
+                font-size: 1.5em;
+            }
+
+            .flirty-buttons button {
+                font-size: 1.2em;
+                padding: 10px 20px;
+            }
+        }
     </style>
 </head>
 
@@ -316,10 +354,9 @@
                 <p class="result-message" id="yesMessage">Waiting to see you! 😊</p>
             </div>
         </section>
-        
     </div>
 
-   
+    <button class="down-button" id="downButton">↓</button>
 
     <div id="modal" class="modal">
         <div class="modal-content">
@@ -331,109 +368,114 @@
     <!-- Audio element to play the MP3 -->
     <audio id="audio" src="./audio1.mp3"></audio>
     <div id="target-section">Play Btn</div>
-    
 
     <script>
-
-
         const audio = document.getElementById('audio');
         const targetSection = document.getElementById('section1');
         let hasPlayed = false; // To ensure audio plays only once
 
-
         window.addEventListener('scroll', function () {
             const rect = targetSection.getBoundingClientRect();
-            const windowHeight = window.innerHeight || document.documentElement.clientHeight;          
-              
+            const windowHeight = window.innerHeight || document.documentElement.clientHeight;
+
             // Check if the target section is in view
             if (rect.top >= 0 && rect.bottom >= windowHeight) {
-                audio.play().then(() => {
-                    hasPlayed = true; // Set flag to true to prevent replay
-                }).catch(function(error) {
-                    console.log('Audio playback prevented:', error);
-                });
-                             
-            }else{
+                if (!hasPlayed) {
+                    audio.play().then(() => {
+                        hasPlayed = true; // Set flag to true to prevent replay
+                    }).catch(function (error) {
+                        console.log('Audio playback prevented:', error);
+                    });
+                }
+            } else {
                 console.log("Not enter");
-                
             }
         });
 
-
         const yesButton = document.querySelector('.flirty-buttons .yes');
-const noButton = document.querySelector('.flirty-buttons .no');
-const resultMessage = document.getElementById('yesMessage');
-const flirtyText = document.getElementById('flirtyText'); // Get the element for the flirty text
-let noButtonClicked = false;
-let intervalId;
+        const noButton = document.querySelector('.flirty-buttons .no');
+        const resultMessage = document.getElementById('yesMessage');
+        const flirtyText = document.getElementById('flirtyText'); // Get the element for the flirty text
+        let noButtonClicked = false;
+        let intervalId;
 
-const modal = document.getElementById('modal');
-const closeModalButton = document.getElementById('close-modal');
+        const modal = document.getElementById('modal');
+        const closeModalButton = document.getElementById('close-modal');
 
-yesButton.addEventListener('click', function () {
-    modal.style.display = 'flex';  // Show the modal
-    noButton.classList.remove('decreasing');
-    yesButton.classList.remove('increasing');
-    noButtonClicked = false;  // Reset noButtonClicked state
-    clearInterval(intervalId);  // Stop the interval when Yes is clicked
-});
+        yesButton.addEventListener('click', function () {
+            modal.style.display = 'flex'; // Show the modal
+            noButton.classList.remove('decreasing');
+            yesButton.classList.remove('increasing');
+            noButtonClicked = false; // Reset noButtonClicked state
+            clearInterval(intervalId); // Stop the interval when Yes is clicked
+        });
 
-// Function to close the modal
-closeModalButton.addEventListener('click', function () {
-    modal.style.display = 'none';  // Hide the modal
-});
+        // Function to close the modal
+        closeModalButton.addEventListener('click', function () {
+            modal.style.display = 'none'; // Hide the modal
+        });
 
-// Optionally, close the modal if the user clicks outside of the modal content
-window.addEventListener('click', function (event) {
-    if (event.target === modal) {
-        modal.style.display = 'none';  // Hide the modal
-    }
-});
+        // Optionally, close the modal if the user clicks outside of the modal content
+        window.addEventListener('click', function (event) {
+            if (event.target === modal) {
+                modal.style.display = 'none'; // Hide the modal
+            }
+        });
 
-noButton.addEventListener('click', function () {
-    noButtonClicked = true;  // Set state indicating no button was clicked
-    clearInterval(intervalId);  // Clear any previous intervals to avoid multiple intervals running simultaneously
-    intervalId = setInterval(() => {
-        let yesFontSize = parseFloat(window.getComputedStyle(yesButton).fontSize);
-        let noFontSize = parseFloat(window.getComputedStyle(noButton).fontSize);
+        noButton.addEventListener('click', function () {
+            noButtonClicked = true; // Set state indicating no button was clicked
+            clearInterval(intervalId); // Clear any previous intervals to avoid multiple intervals running simultaneously
+            intervalId = setInterval(() => {
+                let yesFontSize = parseFloat(window.getComputedStyle(yesButton).fontSize);
+                let noFontSize = parseFloat(window.getComputedStyle(noButton).fontSize);
 
-        // Increase Yes button size by 2px
-        yesButton.style.fontSize = (yesFontSize + 4) + 'px';
-        yesButton.style.padding = (yesFontSize + 10) + 'px ' + (yesFontSize + 20) + 'px';
+                // Increase Yes button size by 2px
+                yesButton.style.fontSize = (yesFontSize + 4) + 'px';
+                yesButton.style.padding = (yesFontSize + 10) + 'px ' + (yesFontSize + 20) + 'px';
 
-        // Decrease No button size by 2px
-        noButton.style.fontSize = (noFontSize - 4) + 'px';
-        noButton.style.padding = (noFontSize + 10) + 'px ' + (noFontSize + 20) + 'px';
+                // Decrease No button size by 2px
+                noButton.style.fontSize = (noFontSize - 4) + 'px';
+                noButton.style.padding = (noFontSize + 10) + 'px ' + (noFontSize + 20) + 'px';
 
-        // Stop decreasing if No button font size gets too small
-        if (noFontSize <= 10) {
-            clearInterval(intervalId);
-        }
-    }, 500);
+                // Stop decreasing if No button font size gets too small
+                if (noFontSize <= 10) {
+                    clearInterval(intervalId);
+                }
+            }, 500);
 
-    // Change the text when No is clicked
-    flirtyText.textContent = "Then how about going to Kovil ?";
-});
+            // Change the text when No is clicked
+            flirtyText.textContent = "Then how about going to Kovil ?";
+        });
 
-document.addEventListener('scroll', function () {
-    const sections = document.querySelectorAll('.text-section');
-    const triggerHeight = window.innerHeight / 1.5; // Adjust this value if needed
+        document.addEventListener('scroll', function () {
+            const sections = document.querySelectorAll('.text-section');
+            const triggerHeight = window.innerHeight / 1.5; // Adjust this value if needed
 
-    sections.forEach(section => {
-        const rect = section.getBoundingClientRect();
-        if (rect.top < triggerHeight) {
-            section.classList.add('active');
-            // Add animation for each span inside the section
-            const spans = section.querySelectorAll('span');
-            spans.forEach((span, index) => {
-                setTimeout(() => {
-                    span.classList.add('appear');
-                }, index * 100); // Stagger the appearance of each word
+            sections.forEach(section => {
+                const rect = section.getBoundingClientRect();
+                if (rect.top < triggerHeight) {
+                    section.classList.add('active');
+                    // Add animation for each span inside the section
+                    const spans = section.querySelectorAll('span');
+                    spans.forEach((span, index) => {
+                        setTimeout(() => {
+                            span.classList.add('appear');
+                        }, index * 100); // Stagger the appearance of each word
+                    });
+                }
             });
-        }
-    });
-});
-        
+        });
+
+        // Down button functionality
+        const downButton = document.getElementById('downButton');
+        downButton.addEventListener('click', function () {
+            window.scrollTo({
+                top: targetSection.offsetTop,
+                behavior: 'smooth'
+            });
+            // Hide the down button after scrolling
+            downButton.classList.add('hidden');
+        });
     </script>
 </body>
 
